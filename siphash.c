@@ -1,14 +1,14 @@
 #include "siphash.h"
 #include "siphash_internal.h"
 
-static inline struct sipkey *sip_tokey(struct sipkey *key, const void *src) {
+struct sipkey *sip_tokey(struct sipkey *key, const void *src) {
 	key->k[0] = SIP_U8TO64_LE((const unsigned char *)src);
 	key->k[1] = SIP_U8TO64_LE((const unsigned char *)src + 8);
 	return key;
 } /* sip_tokey() */
 
 
-static inline void *sip_tobin(void *dst, uint64_t u64) {
+void *sip_tobin(void *dst, uint64_t u64) {
 	SIP_U64TO8_LE((unsigned char *)dst, u64);
 	return dst;
 } /* sip_tobin() */
@@ -99,5 +99,3 @@ uint64_t sip24_final(struct siphash *H) {
 
 	return H->v0 ^ H->v1 ^ H->v2  ^ H->v3;
 } /* sip24_final() */
-
-#endif /* SIPHASH_H */

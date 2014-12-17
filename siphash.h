@@ -81,6 +81,8 @@ struct sipkey {
 	uint64_t k[2];
 }; /* struct sipkey */
 
+struct sipkey *sip_tokey(struct sipkey *key, const void *src);
+void *sip_tobin(void *dst, uint64_t u64);
 struct siphash *sip24_init(struct siphash *H, const struct sipkey *key);
 struct siphash *sip24_update(struct siphash *H, const void *src, size_t len);
 uint64_t sip24_final(struct siphash *H);

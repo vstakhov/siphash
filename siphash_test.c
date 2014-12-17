@@ -1,4 +1,6 @@
-#include <siphash.h>
+#include "siphash.h"
+#include "siphash_internal.h"
+#include <stdio.h>
 /*
  * SipHash-2-4 output with
  * k = 00 01 02 ...
@@ -10,7 +12,7 @@
  * ...
  * in = 00 01 02 ... 3e (63 bytes)
  */
-static inline _Bool sip24_valid(void) {
+static size_t sip24_valid(void) {
 	static const unsigned char vectors[64][8] = {
 		{ 0x31, 0x0e, 0x0e, 0xdd, 0x47, 0xdb, 0x6f, 0x72, },
 		{ 0xfd, 0x67, 0xdc, 0x93, 0xc5, 0x39, 0xf8, 0x74, },
@@ -79,28 +81,29 @@ static inline _Bool sip24_valid(void) {
 	};
 	unsigned char in[64];
 	struct sipkey k;
-	size_t i;
+	size_t i, cycles;
 
 	sip_tokey(&k, "\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017");
+	
+	for (cycles = 0; cycles < 100000; cycles ++) {
+		for (i = 0; i < sizeof in; ++i) {
+			in[i] = i;
 
-	for (i = 0; i < sizeof in; ++i) {
-		in[i] = i;
-
-		if (siphash24(in, i, &k) != SIP_U8TO64_LE(vectors[i]))
-			return 0;
+			if (siphash24(in, i, &k) != SIP_U8TO64_LE(vectors[i]))
+				return 0;
+		}
 	}
 
-	return 1;
+	return cycles * i;
 } /* sip24_valid() */
 
 
-#include <stdio.h>
 
 int main(void) {
-	_Bool ok = sip24_valid();
+	size_t ok = sip24_valid();
 
 	if (ok)
-		puts("OK");
+		printf("OK: %zd hashes generated\n", ok);
 	else
 		puts("FAIL");
 
