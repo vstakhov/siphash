@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(SIPHASH_SRC siphash.c)
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-	set(CMAKE_C_FLAGS "-O3")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
 endif ()
 add_library(siphash STATIC "${SIPHASH_SRC}")
 
