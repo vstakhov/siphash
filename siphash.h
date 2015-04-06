@@ -70,7 +70,11 @@
 struct siphash {
 	uint64_t v0, v1, v2, v3;
 
-	unsigned char buf[8], *p;
+	union {
+		unsigned char buf[8];
+		uint64_t m;
+	} b;
+	unsigned char *p;
 	uint64_t c;
 }; /* struct siphash */
 
